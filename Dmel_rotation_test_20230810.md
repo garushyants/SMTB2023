@@ -10,14 +10,6 @@ library("BSgenome.Dmelanogaster.UCSC.dm6")
 library(MutationalPatterns)
 library(reshape2)
 
-setwd("Documents/Teaching/SMTB2023/20230810_rotation/")
-```
-
-```
-## Error in setwd("Documents/Teaching/SMTB2023/20230810_rotation/"): cannot change working directory
-```
-
-```r
 sample_names <- c("Dmel10k","Dmel100k")
 vcf_files <- c("ZI_allchrom_clean_bi_correctANN.ann.pick.10000.vcf",
                "ZI_allchrom_clean_bi_correctANN.ann.pick.100000.vcf")
