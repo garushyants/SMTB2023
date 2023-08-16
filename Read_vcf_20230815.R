@@ -91,7 +91,8 @@ VCFDataToSaveSingletons<-subset(VCFSepFilterApplied,
 ggsave("Plot1.png",PlotSeqFliesToSave,path=args[2])
 ggsave("Plot2.png",plot2,path=args[2])
 
-#Save VCF without header
+##############
+##Save filtered VCF with header
 
 outfilename<-paste(gsub(".vcf","",args[1]),"_singletons_",FixedCutOff,".vcf",
                                sep="")
