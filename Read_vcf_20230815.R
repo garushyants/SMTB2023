@@ -1,9 +1,9 @@
 #!/usr/bin/env Rscript
-args = commandArgs(trailingOnly=TRUE)
+#args = commandArgs(trailingOnly=TRUE)
 
-# args = c("ZI_allchrom_clean_bi_correctANN.ann.pick.100000.vcf",
-#          "test2",
-#          "/home/garushyants/Documents/Teaching/SMTB2023/20230815_day3")
+args = c("ZI_allchrom_clean_bi_correctANN.ann.pick.100000.vcf",
+         "test2",
+         "/home/garushyants/Documents/Teaching/SMTB2023/20230815_day3_4")
 
 library(tidyr)
 library(dplyr)
@@ -68,6 +68,8 @@ PlotSeqFliesToSave
 
 #
 VCFSepFilterApplied<-subset(VCFSepF,VCFSepF$NSeqFlies>FixedCutOff)
+VCFSepFilterApplied$ANNAll<-paste(VCFSepFilterApplied$AC,VCFSepFilterApplied$AN,VCFSepFilterApplied$ANN,
+                                  sep=";")
 ##################
 #Get only singletons
 plot2<-ggplot(VCFSepFilterApplied)+
@@ -82,7 +84,7 @@ print("Number of singletons in data")
 dim(subset(VCFSepFilterApplied,as.numeric(VCFSepFilterApplied$ACm)==1))[1]
 #
 VCFDataToSaveSingletons<-subset(VCFSepFilterApplied,
-                                VCFSepFilterApplied$ACm==1)[,c(1:10)]
+                                VCFSepFilterApplied$ACm==1)[,c(1:7,17,11,12)]
 
 ##########################
 #Save plots
@@ -94,7 +96,7 @@ ggsave("Plot2.png",plot2,path=args[2])
 outfilename<-paste(gsub(".vcf","",args[1]),"_singletons_",FixedCutOff,".vcf",
                                sep="")
 
-colnames(VCFDataToSaveSingletons)<-c('##fileformat=VCFv4.2
+header<-'##fileformat=VCFv4.2
 ##FILTER=<ID=PASS,Description="All filters passed">
 ##FORMAT=<ID=GT,Number=.,Type=String,Description="Genotype">
 ##INFO=<ID=AC,Number=2,Type=Integer,Description="Allele count in genotypes">
@@ -109,11 +111,16 @@ colnames(VCFDataToSaveSingletons)<-c('##fileformat=VCFv4.2
 ##INFO=<ID=NMD,Number=.,Type=String,Description="Predicted nonsense mediated decay effects for this variant. Format: \'Gene_Name | Gene_ID | Number_of_transcripts_in_gene | Percent_of_transcripts_affected\'">
 ##bcftools_viewVersion=1.18+htslib-1.18
 ##bcftools_viewCommand=view -h ZI_allchrom_clean_bi_correctANN.ann.vcf; Date=Mon Aug  7 21:02:02 2023
-#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	ZI103',rep("",9))
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	ZI103'
 
-write.table(VCFDataToSaveSingletons,
-            file=outfilename,
-            sep="\t",
-            quote=F,
-            col.names = T,
-            row.names = F)
+write.table_with_header <- function(x, file, header, ...){
+  cat(header, '\n',  file = file)
+  write.table(x, file, append = T,
+              sep="\t",
+              quote=F,
+              col.names = F,
+              row.names = F)
+}
+
+write.table_with_header(VCFDataToSaveSingletons,
+                        file=outfilename, header)
